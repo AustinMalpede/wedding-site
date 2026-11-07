@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Save the Weekend · Rachel &amp; Austin · July 9–11, 2027</title>
 <meta name="description" content="Save the weekend! Rachel Odin & Austin Malpede are getting married July 10, 2027 in Cincinnati, Ohio — join us July 9–11." />
+<style>html { background: #c81f63; }</style>
+<script>document.documentElement.classList.add("loading");</script>
+<link rel="preload" as="image" href="rachel-austin.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600&display=block" rel="stylesheet" />
 <style>
   :root {
     --hot-pink: #e2337a;
@@ -47,9 +50,13 @@
   #intro {
     position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
     background: radial-gradient(circle at 30% 20%, #ff6fa3 0%, var(--hot-pink) 45%, var(--pink-deep) 100%);
-    transition: opacity 1s ease 1.6s, visibility 0s linear 2.6s;
+    transition: opacity .5s ease 1.9s, visibility 0s linear 2.4s;
   }
   #intro.open { opacity: 0; visibility: hidden; }
+  .envelope, #gate { transition: opacity .5s ease; }
+  html.loading .envelope, html.loading #gate { opacity: 0; }
+  /* 3. envelope fades away first, so its text never overlaps the card */
+  #intro.open .envelope { opacity: 0; transform: scale(1.04); transition: opacity .5s ease 1.5s, transform .5s ease 1.5s; }
   .envelope { position: relative; width: min(520px, 86vw); aspect-ratio: 1.45; perspective: 1400px; }
   .env-back, .env-front, .env-flap, .env-card { position: absolute; left: 0; width: 100%; }
   .env-back {
@@ -122,12 +129,12 @@
   /* ---------- Blooms & petals ---------- */
   .blooms { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
   .bloom {
-    position: absolute; border-radius: 50%; filter: blur(30px); opacity: .4; mix-blend-mode: screen;
-    animation: drift 18s ease-in-out infinite alternate;
+    position: absolute; border-radius: 50%; opacity: .35;
+    animation: drift 18s ease-in-out infinite alternate; will-change: transform;
   }
   @keyframes drift { to { transform: translate(40px, -30px) scale(1.15) rotate(25deg); } }
   #petals { position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden; }
-  .petal { position: absolute; top: -40px; border-radius: 150% 0 150% 0; opacity: .85; animation: fall linear forwards; }
+  .petal { position: absolute; top: -40px; border-radius: 150% 0 150% 0; opacity: .85; animation: fall linear forwards; will-change: transform; }
   @keyframes fall { to { transform: translate(var(--dx), 110vh) rotate(var(--rot)); opacity: .2; } }
 
   /* ---------- Shared paper card ---------- */
@@ -327,7 +334,7 @@
   <!-- ================= HERO ================= -->
   <article class="paper std reveal" id="std">
     <div class="std-photo">
-      <img src="rachel-austin.png" alt="Rachel and Austin in a garden under blooming crepe myrtles" />
+      <img src="rachel-austin.jpg" decoding="async" alt="Rachel and Austin in a garden under blooming crepe myrtles" />
     </div>
     <div class="std-text">
       <h1 class="save"><span>Save the</span><span>Weekend</span></h1>
@@ -479,9 +486,12 @@
       document.body.classList.remove("locked");
       document.getElementById("std").classList.add("in");
       startReveals();
-      burst(50);
-    }, 1500);
+      burst(30);
+    }, 1900);
   }
+  const showIntro = () => document.documentElement.classList.remove("loading");
+  Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]).then(showIntro);
+
   gate.addEventListener("submit", e => { e.preventDefault(); tryOpen(); });
   document.getElementById("seal").addEventListener("click", tryOpen);
 
@@ -502,7 +512,7 @@
       Object.assign(b.style, {
         width: size + "px", height: size * rand(.7, 1.1) + "px",
         left: rand(-10, 95) + "%", top: rand(-10, 90) + "%",
-        background: `radial-gradient(circle at 40% 40%, ${pick(PALETTE)}, transparent 70%)`,
+        background: `radial-gradient(circle at 40% 40%, ${pick(PALETTE)}, transparent 65%)`,
         animationDelay: -rand(0, 18) + "s",
         animationDuration: rand(14, 24) + "s",
       });
