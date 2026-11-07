@@ -114,6 +114,7 @@
     background: var(--orange); color: #fff;
     font-family: var(--caps); font-size: .7rem; letter-spacing: .25em; text-transform: uppercase;
   }
+  #gate.prefilled .gate-row { display: none; }
   .gate-error { min-height: 1em; color: #ffe1cf !important; }
   .shake { animation: shake .45s; }
   @keyframes shake { 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
@@ -368,7 +369,7 @@
         <span class="num">9</span>
         <span class="month">July</span>
         <h3>Welcome Reception</h3>
-        <p>Shires' Rooftop<br/><em>Kick off the weekend with drinks above the city</em></p>
+        <p>Shires' Rooftop<br/><em>Food &amp; drinks above the city</em></p>
       </div>
       <div class="day feature">
         <span class="tag">The Big Day</span>
@@ -453,6 +454,17 @@
   const codeInput = document.getElementById("code");
   const gateError = document.getElementById("gate-error");
   try { if (localStorage.getItem("ra-access") === ACCESS_CODE) codeInput.value = ACCESS_CODE; } catch (e) {}
+
+  // Personal link: save-the-date.html?code=XXXX (or #code=XXXX) skips typing the code.
+  const linkCode = (new URLSearchParams(location.search).get("code") ||
+                    new URLSearchParams(location.hash.slice(1)).get("code") || "").trim().toLowerCase();
+  if (linkCode === ACCESS_CODE) {
+    codeInput.value = ACCESS_CODE;
+    try { localStorage.setItem("ra-access", ACCESS_CODE); } catch (e) {}
+    gate.classList.add("prefilled");
+    gate.querySelector("label").textContent = "Tap the seal to open";
+    history.replaceState(null, "", location.pathname); // keep the code out of the address bar
+  }
 
   function tryOpen() {
     if (codeInput.value.trim().toLowerCase() !== ACCESS_CODE) {
